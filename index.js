@@ -1,5 +1,6 @@
 const { Requester, Validator } = require('@chainlink/external-adapter');
 const { response } = require('express');
+
 // Define custom error scenarios for the API.
 // Return true for the adapter to retry.
 const customError = (data) => {
@@ -7,16 +8,13 @@ const customError = (data) => {
   return false
 }
 
-
-
 // Define custom parameters to be used by the adapter.
 // Extra parameters can be stated in the extra object,
 // with a Boolean value indicating whether or not they
 // should be required.
 const customParams = {
   addresses: ['addresses'],
-  job_type: ['job_type'],
-  endpoint: false
+  tickSet: ['tickSet']
 }
 
 
@@ -25,19 +23,19 @@ const createRequest = (input, callback) => {
   const validator = new Validator(callback, input, customParams)
   const jobRunID = validator.validated.id
   const addresses = validator.validated.data.addresses;
-  const job_type= validator.validated.data.job_type;
-  const endpoint1 = validator.validated.data.endpoint || 'submit';
-  const endpoint2 = validator.validated.data.endpoint || 'resolve';
-  const id = fetch (`http://18.191.166.107/api/${endpoint1}`,{
+  const tickSet= validator.validated.data.tickSet;
+  const endpoint1 = 'submit';
+  const endpoint2 = 'resolve';
+  const id = fetch (`http://18.117.142.124/api/${endpoint1}`,{
     method: 'POST',
     body: json.stringify(customParams),
   })
     .then(response => response.json)
     .then(job_id => console.log(job_id))
-  const data = fetch('GET',`http://18.191.166.107/api/${endpoint2}/${id}`)
+  const data = fetch('GET',`http://18.117.142.124/api/${endpoint2}/${id}`)
     .then(response => response.json)
     .then(bucket => console.log(bucket))
-//add header
+  //add header
   const headerObj = {
     'Content-Type': 'application/json'
     //public api so no need Aut                                                                                                                                                                                                                                                                                                                                                                                                                                                               horization
