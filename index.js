@@ -9,24 +9,20 @@ function numBigIntToBytes32(num) {
 }
 
 async function getAddresses(tokenId) {
-  const result = await axios.post('https://spec-address-db.herokuapp.com/v1/addressBatch/availAddressesEA', {
-    tokenId: tokenId,
-    key: '12345'
-  })
-  .then(response => {
+  try {
+    const response = await axios.post('https://spec-address-db.herokuapp.com/v1/addressBatch/availAddressesEA', {
+      tokenId: tokenId,
+      key: '12345'
+    })
     console.log(response.status);
     return response.data.signed_addresses
-  })
-  .catch(error => {
-    console.log(error);
-  });
-
-  return result
+  } catch (error) {
+    console.error(error);
   }
+}
 
 async function callMacroScore(addresses) {
   const data = JSON.stringify({"addresses": addresses,"job_type":"calculate"});
-
   const config = {
     method: 'post',
     url: 'http://18.117.142.124/api/submit/',
@@ -35,39 +31,54 @@ async function callMacroScore(addresses) {
     },
     data : data
   };
-
-  axios(config)
-  .then(response => {
-    console.log(response.data)
-  })
-  .catch(error => {
-    console.log(error);
-  });
+  try {
+    const response = await axios(config)
+    return response.data.job_id
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 async function resolveMacroScore(jobid) {
-  const result = await axios.get(`http://18.117.142.124/api/resolve/${jobid}`)
-  .then(response => {
-    return response.data
-  })
-  .catch(error => {
-    console.log(error);
-  });
-  return result
+  try {
+    const result = await axios.get(`http://18.117.142.124/api/resolve/${jobid}`)
+    return result.data
+  } catch(error) {
+    console.error(error);
+  }
 }
 
 async function main() {
-  const tokenId = numBigIntToBytes32("42747786677057537933777365201756780713494970703527385451017290874280990481333")
-  const addresses = await getAddresses(tokenId)
-  console.log(addresses)
-  const jobid = await callMacroScore(addresses)
-  let score = await resolveMacroScore("ba42b81d-f728-4521-9fe0-4c85c0ea736d")
-  while(score.completed==false) {
-    await delay(5000)
-    console.log("score not ready, trying again...")
-    score = await resolveMacroScore("ba42b81d-f728-4521-9fe0-4c85c0ea736d")
+  try {
+    const tokenId = numBigIntToBytes32("42747786677057537933777365201756780713494970703527385451017290874280990481333")
+    const addresses = await getAddresses(tokenId)
+    const jobid = await callMacroScore(addresses)
+    console.log(jobid)
+    let score = await resolveMacroScore(jobid)
+    while(score.completed==false) {
+      await delay(5000)
+      console.log("score not ready, trying again...")
+      score = await resolveMacroScore(jobid)
+    }
+    console.log(score.result)
+  } catch (err) {
+    console.error(err);
   }
-  console.log(score.result)
 }
 
 main()
+  .then((result) => {
+    console.log("Process finished!")
+  })
+  .catch((error) => {
+    console.error("Process errored out", error)
+  })
+
+// exports.handler = async (event) => {
+//   const responseData = await main()
+//   const response = {
+//       statusCode: 200,
+//       body: JSON.stringify(responseData),
+//   };
+//   return response;
+// };
