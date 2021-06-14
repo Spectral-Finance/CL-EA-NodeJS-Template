@@ -68,7 +68,18 @@ yarn test
 
 Natively run the application (defaults to port 8080):
 
-### Run
+### Run with Docker
+
+```bash
+API_KEY={{insert API key}} docker-compose up
+
+curl -H "Content-Type: application/json" \
+  --request POST \
+  --data '{"jobID": "1", "data": {"tokenIdInt": "42747786677057537933777365201756780713494970703527385451017290874280990481333", "tickSet": "1"}}' \
+  http://localhost:3000
+```
+
+### Run Locally
 
 (Optional) Compile the code
 

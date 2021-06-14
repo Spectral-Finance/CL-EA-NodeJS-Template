@@ -1,16 +1,18 @@
-import { Request, Response } from 'express'
-import { createRequest } from './index'
+import express, { Request, Response } from 'express';
+import { createRequest } from './index';
 
-const express = require('express')
-const bodyParser = require('body-parser')
-const app = express()
-const port = process.env.EA_PORT || 8080
+const app = express();
+const port = 3000;
 
-app.use(bodyParser.json())
+app.use(express.json());
 
 app.post('/', async (req: Request, res: Response) => {
-  const result = await createRequest(req.body);
-  return res.status(result.status).json(result.data)
-})
+  try {
+    const result = await createRequest(req.body);
+    return res.status(result.status).json(result.data);
+  } catch (err) {
+    return res.status(500).json({ error: 'Server Error' });
+  }
+});
 
-app.listen(port, () => console.log(`Listening on port ${port}!`))
+app.listen(port, () => console.log(`Listening on port ${port}!`));
