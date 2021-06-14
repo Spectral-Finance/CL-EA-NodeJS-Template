@@ -7,19 +7,10 @@ const app = express()
 const port = process.env.EA_PORT || 8080
 
 app.use(bodyParser.json())
-/*app.GET('/', (req, res) => {
-  console.log('GET Data: ', req.body)
-  createRequest(req.body, (status, result) => {
-    console.log('Result: ', result)
-    res.status(status).json(result)
-  })
-})*/
-app.post('/', (req: Request, res: Response) => {
-  console.log('POST Data: ', req.body)
-  createRequest(req.body, (status: any, result: any) => {
-    console.log('Result: ', result)
-    res.status(status).json(result)
-  })
+
+app.post('/', async (req: Request, res: Response) => {
+  const result = await createRequest(req.body);
+  return res.status(result.status).json(result.data)
 })
 
 app.listen(port, () => console.log(`Listening on port ${port}!`))
