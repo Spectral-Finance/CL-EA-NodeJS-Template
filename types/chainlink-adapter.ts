@@ -39,19 +39,15 @@ export interface ICustomError {
 export const RequesterRequestWrapper = (
   config: IRequesterRequestConfig,
   customErrrorFunction: { (data: ICustomError): boolean },
-): Promise<IRequesterResponse> => {
-  return Requester.request(config, customErrrorFunction);
-};
+): Promise<IRequesterResponse> => Requester.request(config, customErrrorFunction);
 
-export const RequesterErroredWrapper = (jobRunID: string, error: unknown, statusCode: number = 500) => {
-  return Requester.errored(jobRunID, error, statusCode);
-};
+export const RequesterErroredWrapper = (jobRunID: string, error: any, statusCode: number = 500) => Requester.errored(jobRunID, error, statusCode);
 
 export interface IRequestInput {
   id: string; // numeric
   data: {
     tokenIdInt: string; // numeric
-    tickSet: string; //numeric
+    tickSet: string; // numeric
   };
 }
 
@@ -62,7 +58,7 @@ export interface IRequestInput {
  * with a Boolean value indicating whether or not they
  * should be required.
  */
-export const getValidatorWrapper = (input: IRequestInput, customParams: any): any => {
-  //TODO: define types here
-  return new Validator(input, customParams);
-};
+export const getValidatorWrapper = (input: IRequestInput, customParams: any): any => 
+  // TODO: define types here
+   new Validator(input, customParams)
+;

@@ -1,5 +1,5 @@
 import { Callback, Context } from 'aws-lambda';
-import { getConfig } from './config';
+import getConfig from './config';
 import {
   IRequesterResponse,
   getValidatorWrapper,
