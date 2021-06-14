@@ -1,12 +1,20 @@
 import { Callback, Context } from 'aws-lambda';
-import { IRequesterResponse, getValidatorWrapper, IRequestInput, ICustomError, RequesterRequestWrapper, RequesterErroredWrapper } from './types/chainlink-adapter'
+import { getConfig } from './config';
+import {
+  IRequesterResponse,
+  getValidatorWrapper,
+  IRequestInput,
+  ICustomError,
+  RequesterRequestWrapper,
+  RequesterErroredWrapper,
+} from './types/chainlink-adapter';
 
 interface ICreateRequestResponse extends IRequesterResponse {
   jobRunID: string;
 }
 
 export const createRequest = async (input: IRequestInput): Promise<ICreateRequestResponse> => {
-  var jobRunID = ''
+  var jobRunID = '';
   try {
     const customParams = {
       tokenIdInt: 'tokenIdInt',
@@ -19,7 +27,7 @@ export const createRequest = async (input: IRequestInput): Promise<ICreateReques
       url: 'https://xzff24vr3m.execute-api.us-east-2.amazonaws.com/default/spectral-proxy/',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': 'XYpX4gaNaCafgAzdBpQyaLrF34N0Qp71N6qOwvSh',
+        'x-api-key': getConfig().apiKey,
       },
       data: `{\"tokenInt\":\"${validator.validated.data.tokenIdInt}\"}`,
       method: 'POST',
@@ -34,7 +42,7 @@ export const createRequest = async (input: IRequestInput): Promise<ICreateReques
     if (response.data?.length > 0) {
       return { jobRunID, ...response };
     } else {
-      throw RequesterErroredWrapper(jobRunID, new Error("Response did not contain score data!"), 400);
+      throw RequesterErroredWrapper(jobRunID, new Error('Response did not contain score data!'), 400);
     }
   } catch (error) {
     throw RequesterErroredWrapper(jobRunID, error, 500);

@@ -51,6 +51,13 @@ Install dependencies:
 yarn
 ```
 
+### Environment Variables
+
+Copy the `.env.example` file into your repository as `.env` and modify as necessary.
+| Variable | Description            |
+| -------- | ---------------------- |
+| API_KEY  | Spectral Proxy API Key |
+
 ### Test
 
 Run the local tests:
