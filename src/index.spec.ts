@@ -1,8 +1,8 @@
 import { createRequest } from './index';
-import { IRequestInput } from './types/chainlink-adapter';
+import { IRequestInput } from './util/chainlink-adapter';
 
 describe('createRequest', () => {
-  const requestTimeout = 25000;
+  const requestTimeout = 40000;
   const jobID = '1';
 
   const tests = [
