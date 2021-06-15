@@ -1,17 +1,8 @@
+import { ScoreProvider } from "./score-provider";
+
 const { Requester, Validator } = require('@chainlink/external-adapter'); // no @types packages for this
 
-export interface IRequesterRequestConfig {
-  url: string;
-  headers: {
-    'Content-Type': string;
-    'x-api-key': string;
-  };
-  data: string;
-  method: string;
-  timeout: number;
-}
-
-interface RequestResponseResult {
+export interface RequestResponseResult {
   address: string;
   score_aave: string; // numberic
   score_comp: string; // numberic
@@ -21,7 +12,7 @@ interface RequestResponseResult {
   is_updating_comp: boolean;
 }
 
-export interface IRequesterResponse {
+export interface ScoreRequestResponse {
   data: RequestResponseResult[];
   status: number;
 }
@@ -37,9 +28,9 @@ export interface ICustomError {
  * @returns
  */
 export const RequesterRequestWrapper = (
-  config: IRequesterRequestConfig,
+  config: ScoreProvider,
   customErrrorFunction: { (data: ICustomError): boolean },
-): Promise<IRequesterResponse> => Requester.request(config, customErrrorFunction);
+): Promise<ScoreRequestResponse> => Requester.request(config, customErrrorFunction);
 
 export const RequesterErroredWrapper = (jobRunID: string, error: any, statusCode: number = 500) => Requester.errored(jobRunID, error, statusCode);
 
